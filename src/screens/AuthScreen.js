@@ -5,10 +5,16 @@ import {
   StyleSheet, 
   TouchableOpacity, 
   Platform,
-  Alert 
+  Alert,
+  ImageBackground,
+  Dimensions,
+  StatusBar
 } from 'react-native';
 //import auth from '@react-native-firebase/auth';
 import { appleAuth } from '@invertase/react-native-apple-authentication';
+import { LinearGradient } from 'expo-linear-gradient';
+
+const { width, height } = Dimensions.get('window');
 
 export default function AuthScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
@@ -25,9 +31,10 @@ export default function AuthScreen({ navigation }) {
 
       if (identityToken) {
         const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
-       // const userCredential = await auth().signInWithCredential(appleCredential);
-        //return userCredential;
-        return appleCredential
+        const userCredential = await auth().signInWithCredential(appleCredential);
+        return userCredential;
+
+
       }
     } catch (error) {
       Alert.alert('Error', 'Apple Sign-In failed. Please try again.');
@@ -38,40 +45,80 @@ export default function AuthScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.logo}>SwiftSell</Text>
-        <Text style={styles.tagline}>Your AI-Powered Marketplace Helper</Text>
-      </View>
-
-      <View style={styles.features}>
-        <Text style={styles.featuresTitle}>Premium Features:</Text>
-        <Text style={styles.feature}>• AI-Powered Listing Generator</Text>
-        <Text style={styles.feature}>• Instant Background Removal</Text>
-        <Text style={styles.feature}>• SEO-Optimized Titles</Text>
-        <Text style={styles.feature}>• Smart Price Estimator</Text>
-        <Text style={styles.feature}>• One-Click Copy & Post</Text>
-      </View>
-
-      {Platform.OS === 'ios' && (
-        <TouchableOpacity 
-          style={styles.appleButton}
-          onPress={onAppleButtonPress}
-          disabled={loading}
+      <StatusBar barStyle="light-content" />
+      <ImageBackground
+        source={require('../../assets/auth-bg.jpg')}
+        style={styles.backgroundImage}
+      >
+        <LinearGradient
+          colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.8)']}
+          style={styles.gradient}
         >
-          <Text style={styles.appleButtonText}>
-            {loading ? 'Signing in...' : 'Sign in with Apple'}
-          </Text>
-        </TouchableOpacity>
-      )}
+          <View style={styles.content}>
+            <View style={styles.header}>
+              <Text style={styles.logo}>SwiftSell</Text>
+              <Text style={styles.tagline}>Your AI-Powered Marketplace Helper</Text>
+            </View>
+
+            <View style={styles.featuresCard}>
+              <Text style={styles.featuresTitle}>Premium Features</Text>
+              <View style={styles.featuresList}>
+                <FeatureItem text="AI-Powered Listing Generator" />
+                <FeatureItem text="Instant Background Removal" />
+                <FeatureItem text="SEO-Optimized Titles" />
+                <FeatureItem text="Smart Price Estimator" />
+                <FeatureItem text="One-Click Copy & Post" />
+              </View>
+            </View>
+
+            <View style={styles.bottomSection}>
+              {Platform.OS === 'ios' && (
+                <TouchableOpacity 
+                  style={[
+                    styles.appleButton,
+                    loading && styles.appleButtonDisabled
+                  ]}
+                  onPress={onAppleButtonPress}
+                  disabled={loading}
+                >
+                  <Text style={styles.appleButtonText}>
+                    {loading ? 'Signing in...' : 'Sign in with Apple'}
+                  </Text>
+                </TouchableOpacity>
+              )}
+              <Text style={styles.termsText}>
+                By continuing, you agree to our Terms of Service and Privacy Policy
+              </Text>
+            </View>
+          </View>
+        </LinearGradient>
+      </ImageBackground>
     </View>
   );
 }
 
+const FeatureItem = ({ text }) => (
+  <View style={styles.featureItem}>
+    <View style={styles.featureDot} />
+    <Text style={styles.featureText}>{text}</Text>
+  </View>
+);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
-    padding: 20,
+  },
+  backgroundImage: {
+    flex: 1,
+    width: width,
+    height: height,
+  },
+  gradient: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+    padding: 24,
     justifyContent: 'space-between',
   },
   header: {
@@ -79,47 +126,73 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    color: '#007AFF',
-    marginBottom: 10,
+    fontSize: 48,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    marginBottom: 12,
+    letterSpacing: 1,
   },
   tagline: {
     fontSize: 18,
-    color: '#666',
+    color: '#FFFFFF',
     textAlign: 'center',
+    opacity: 0.9,
   },
-  features: {
-    padding: 20,
-    backgroundColor: '#FFF',
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+  featuresCard: {
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 20,
+    padding: 24,
+    backdropFilter: 'blur(10px)',
+    marginVertical: 32,
   },
   featuresTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    color: '#333',
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: 20,
+    textAlign: 'center',
   },
-  feature: {
+  featuresList: {
+    gap: 16,
+  },
+  featureItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  featureDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#007AFF',
+  },
+  featureText: {
     fontSize: 16,
-    color: '#666',
-    marginBottom: 10,
+    color: '#FFFFFF',
+    opacity: 0.9,
+  },
+  bottomSection: {
+    gap: 16,
+    marginBottom: 40,
   },
   appleButton: {
-    backgroundColor: '#000',
-    padding: 16,
-    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    padding: 18,
+    borderRadius: 16,
     alignItems: 'center',
-    marginBottom: 30,
+  },
+  appleButtonDisabled: {
+    opacity: 0.7,
   },
   appleButtonText: {
-    color: '#FFF',
+    color: '#000000',
     fontSize: 18,
     fontWeight: '600',
+  },
+  termsText: {
+    color: '#FFFFFF',
+    opacity: 0.7,
+    textAlign: 'center',
+    fontSize: 12,
   },
 }); 

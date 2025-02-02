@@ -1,13 +1,14 @@
 import { initializeApp } from '@react-native-firebase/app';
 
 const firebaseConfig = {
-  apiKey: "your-api-key",
-  authDomain: "your-auth-domain",
-  projectId: "your-project-id",
-  storageBucket: "your-storage-bucket",
-  messagingSenderId: "your-messaging-sender-id",
-  appId: "your-app-id"
+  apiKey: "AIzaSyBsKHkxJNFN33c5dEmXkNjatmVfQMrhtiE",
+  authDomain: "swiftsellf.firebaseapp.com",
+  projectId: "swiftsellf",
+  storageBucket: "swiftsellf.firebasestorage.app",
+  messagingSenderId: "35899047301",
+  appId: "1:35899047301:ios:84a05765495a4ef690d8ec"
 };
+
 
 export const initializeFirebase = () => {
   initializeApp(firebaseConfig);
