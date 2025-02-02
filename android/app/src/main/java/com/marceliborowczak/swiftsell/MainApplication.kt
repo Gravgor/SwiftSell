@@ -1,4 +1,4 @@
-package com.anonymous.SwiftSell
+package com.marceliborowczak.swiftsell
 
 import android.app.Application
 import android.content.res.Configuration
