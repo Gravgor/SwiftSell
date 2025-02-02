@@ -7,7 +7,7 @@ import {
   Platform,
   Alert 
 } from 'react-native';
-import auth from '@react-native-firebase/auth';
+//import auth from '@react-native-firebase/auth';
 import { appleAuth } from '@invertase/react-native-apple-authentication';
 
 export default function AuthScreen({ navigation }) {
@@ -25,8 +25,9 @@ export default function AuthScreen({ navigation }) {
 
       if (identityToken) {
         const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
-        const userCredential = await auth().signInWithCredential(appleCredential);
-        return userCredential;
+       // const userCredential = await auth().signInWithCredential(appleCredential);
+        //return userCredential;
+        return appleCredential
       }
     } catch (error) {
       Alert.alert('Error', 'Apple Sign-In failed. Please try again.');
